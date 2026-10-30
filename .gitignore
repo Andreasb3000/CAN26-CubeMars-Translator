@@ -1,0 +1,4 @@
+test_core
+test_can26
+*.o
+.DS_Store
