@@ -8,23 +8,6 @@ This is a **software-only** proof of the velocity-WRITE path:
 
 Nothing is sent to a motor. This is **not** production safety firmware.
 
-## Prerequisites / folder placement
-
-Place this folder beside the already-cloned CAN26 repository:
-
-```
-HuskyRobotics/
-├── CAN26/
-│   ├── CANPacket.c
-│   └── Packets/
-└── CubeMars_Servo_Deliverable1/
-    ├── CubeMarsServo.h
-    ├── CubeMarsServo.c
-    ├── CAN26CubeMars.h
-    ├── CAN26CubeMars.c
-    ├── test_core.c
-    └── test_can26.c
-```
 
 ## 1. Portable encoding/conversion tests
 
@@ -57,12 +40,6 @@ PASS: CAN26 -> CubeMars Servo software integration. No CAN transmission occurred
 This test uses motor-shaft semantics: 1 rev/s * 60 sec/min * 14 pole pairs = **840 ERPM** = `0x00000348`.
 If your CAN26 rev/s instead means output-shaft speed, set `input_is_joint_speed=true` and the same request yields **32760 ERPM** (`00 00 7F F8`) due to the 39:1 gearbox.
 
-## Sources and assumptions
-
-- CubeMars AK V3 Drive Software User Manual V1.0.1, section 2.1.4 (speed mode 3; 4-byte, int32 big-endian ERPM; extended CAN ID), sections 2.3.1 (feedback; **not yet implemented here**).
-- CubeMars AK54-4810-2D-A2 Driver Manual V1.0.0 (CAN 1 Mbps, 18–52 V; actual hardware and configuration still to verify).
-- Husky Robotics CAN26 repository: https://github.com/huskyroboticsteam/CAN26 (velocity decoder and packet constructors).
-- Motor: AK60-39 V3.0, 14 pole pairs and 39:1 reduction.
 
 ## Review items before connecting hardware
 
