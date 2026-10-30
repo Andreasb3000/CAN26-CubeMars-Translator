@@ -40,13 +40,3 @@ PASS: CAN26 -> CubeMars Servo software integration. No CAN transmission occurred
 This test uses motor-shaft semantics: 1 rev/s * 60 sec/min * 14 pole pairs = **840 ERPM** = `0x00000348`.
 If your CAN26 rev/s instead means output-shaft speed, set `input_is_joint_speed=true` and the same request yields **32760 ERPM** (`00 00 7F F8`) due to the 39:1 gearbox.
 
-
-## Review items before connecting hardware
-
-- Confirm CAN26 velocity semantics: motor shaft or gearbox output.
-- Confirm actual driver, control mode, CAN ID, bitrate, motor supply, CAN wiring.
-- Define team-approved speed, torque, current, acceleration, travel, and timeout limits. The `max_abs_erpm=40000` in tests is NOT a safe limit.
-- Servo speed command does NOT accept CAN26's feedforward torque; this implementation rejects nonzero feedforward torque.
-- Add controller acknowledgement handling, E-stop, watchdog/timeout, and fault logic before hardware operation.
-- Validate actual raw CAN frame ID, frame type, length, CRC/error flags at the driver/HAL boundary. This module assumes `CANPacket_t` was already parsed by CAN26.
-- CubeMars-specific receive/feedback translation and STM32 FDCAN HAL TX/RX remain to be implemented.
