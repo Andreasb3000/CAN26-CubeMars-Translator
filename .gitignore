@@ -1,4 +1,7 @@
-test_core
-test_can26
+# Native test binaries
+/test_core
+/test_can26
+/test_feedback_core
+/test_feedback_can26
 *.o
 .DS_Store

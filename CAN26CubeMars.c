@@ -13,7 +13,7 @@ bool CAN26ToCubeMarsServoVelocity(const CANPacket_t *incoming,
         return false;
     }
 
-    /* Validate before calling the CAN26 decoder (which expects six data bytes). */
+    /* Verifying before calling  CAN26 decoder (which expects six data bytes). */
     if (!incoming->device.motorDomain ||
         incoming->device.deviceUUID != CAN_UUID_BLDC_ELBOW ||
         (incoming->command & 0x7Fu) != CAN_COMMAND_ID__BLDC_INPUT_VELOCITY ||

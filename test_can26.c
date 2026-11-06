@@ -47,27 +47,11 @@ int main(void) {
     assert(outgoing.data[2] == 0x03 && outgoing.data[3] == 0x48);
     show_frame(&outgoing);
 
-    /* Test negative velocity */
-
-    incoming = CANMotorPacket_BLDC_SetInputVelocity(
-        jetson, elbow, -1.0f, 0.0f
-    );
-
-    bool success = CAN26ToCubeMarsServoVelocity(
-        &incoming, &config, &outgoing
-    );
-
-    printf("\nNegative velocity test:\n");
-    printf("Translation successful: %s\n",
-        success ? "yes" : "no");
-
-    show_frame(&outgoing);
-
-    assert(success);
-    assert(outgoing.data[0] == 0xFF &&
-        outgoing.data[1] == 0xFF);
-    assert(outgoing.data[2] == 0xFC &&
-        outgoing.data[3] == 0xB8);
+    /* Negative velocity survives the full CAN26 decoder and CubeMars encoder. */
+    incoming = CANMotorPacket_BLDC_SetInputVelocity(jetson, elbow, -1.0f, 0.0f);
+    assert(CAN26ToCubeMarsServoVelocity(&incoming, &config, &outgoing));
+    assert(outgoing.data[0] == 0xFF && outgoing.data[1] == 0xFF);
+    assert(outgoing.data[2] == 0xFC && outgoing.data[3] == 0xB8); /* -840 ERPM */
 
     /* Reject CAN26 feedforward torque that Servo speed mode cannot encode. */
     incoming = CANMotorPacket_BLDC_SetInputVelocity(jetson, elbow, 1.0f, 1.0f);
