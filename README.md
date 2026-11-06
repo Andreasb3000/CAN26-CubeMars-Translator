@@ -1,8 +1,5 @@
 # Husky Robotics — CAN26 ↔ CubeMars V3 Servo Translator
 
-**Deliverable 2: bidirectional, software-only prototype**
-
-This project extends Deliverable 1 with decoding of CubeMars Servo feedback and creation of CAN26 encoder-estimate packets. It is meant for VS Code on a Mac, before STM32/FDCAN integration. **Nothing in this folder sends a physical CAN frame.**
 
 ## Folder layout
 
