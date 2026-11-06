@@ -60,30 +60,6 @@ cc -std=c11 -Wall -Wextra -I../CAN26 \
 3. `CubeMarsToCAN26EncoderEstimates()` uses Husky Robotics' existing `CANMotorPacket_BLDC_EncoderEstimates()` constructor to prepare a CAN26 `0x0E` response addressed to a chosen receiver.
 4. `CAN26ReplyToEncoderEstimateRequest()` demonstrates request/response behavior for CAN26 `GetEncoderEstimates` (`0x0D`, encoder index 0). It requires the caller to affirm the last CubeMars feedback is fresh; the module itself **does not** implement a clock, cache, or watchdog.
 
-### Example feedback
-
-Simulated CubeMars 29-bit extended CAN identifier: `0x2901`
-
-```
-03 84   00 64   00 7D   23   00
-  |       |       |      |    |
- +90°  +1000ERPM 1.25A   35°C no fault
-```
-
-At the **motor shaft**, 1000 ERPM ÷ (14 pole pairs × 60) = approximately **1.190476 rev/s**. At the **39:1 gearbox output**, it is approximately **0.030525 rev/s**.
-
-The CAN26 response constructed by the real CAN26 library holds position in revolutions and velocity in rev/s, encoded using its two BFloat24 fields. For the test case with **motor-shaft position assumption** and motor-shaft output, position is +0.25 rev (90°) and speed is approximately +1.190476 rev/s.
-
-## Important review decisions before hardware use
-
-- **Position reference is not established.** The AK V3 manual defines `0x29` position as 0.1 degrees/count, but does not clearly say whether that angle is measured at the motor shaft or gearbox output. The `position_is_motor_shaft` argument is an explicit test choice, not a confirmed fact. `config.input_is_joint_speed` selects the CAN26 mechanical reporting reference. Verify both against the real motor and team command conventions.
-- **Position range / origin:** the standard 0x29 field spans roughly +/-3200 degrees, and may be insufficient for a continuous absolute position record. The V3 protocol offers optional 0x2A position feedback with a larger range. The origin and wrap behavior must be characterized before controlling the robot arm.
-- **Faults:** decoding a frame is not confirmation that the motor is healthy. The CAN26 encoder-estimates constructor has no fault field. This adapter refuses to publish normal-looking encoder estimates for a nonzero CubeMars status, but you still need separate fault, E-Stop, and heartbeat handling.
-- **Freshness:** only use the request/reply helper with a recent status frame, measured using the STM32's monotonic time. A stale cached frame must never be presented as current feedback. A `true` Boolean in a test is not a firmware freshness implementation.
-- **Driver ID / velocity limits / gear ratio / bus rates:** test defaults are not production settings. Verify with hardware.
-- **CAN26 support:** request/reply helper currently supports encoder index 0 only and does not send CAN acknowledgments or communicate with the CubeMars hardware itself.
-- **No STM32 HAL yet:** FDCAN reception, transmission, low-level filters, timeout logic, and physical hardware tests are a later milestone.
-
 ## Primary references
 
 - CubeMars *AK Series Motor Module V3 Driver Software User Manual*, §2.3.1 (Servo status message 0x29, scale factors, optional 0x2A) and §2.1.4 (speed command).
